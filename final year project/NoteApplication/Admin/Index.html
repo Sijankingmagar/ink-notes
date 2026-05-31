@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ink Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+
+  <!-- ── LOGIN SCREEN ── -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-mark">I</div>
+        <span class="login-brand">Ink</span>
+        <span class="login-badge">Admin</span>
+      </div>
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-sub">Sign in to the admin console</p>
+      <div class="login-fields">
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <input type="email" class="field-input" id="loginEmail" placeholder="admin@ink.app" value="admin@ink.app"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Password</label>
+          <input type="password" class="field-input" id="loginPass" placeholder="••••••••" value="admin123"/>
+        </div>
+        <button class="login-btn" onclick="doLogin()">Sign in to admin</button>
+        <p class="login-hint">Demo: use any credentials above</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN APP ── -->
+  <div id="adminApp" class="admin-app" style="display:none">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-top">
+        <div class="admin-logo">
+          <div class="admin-mark">I</div>
+          <div>
+            <div class="admin-brand">Ink</div>
+            <div class="admin-role">Admin Console</div>
+          </div>
+        </div>
+        <nav class="admin-nav">
+          <div class="nav-group-label">Overview</div>
+          <a class="nav-item active" data-page="dashboard" onclick="goTo('dashboard',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg>
+            Dashboard
+          </a>
+          <a class="nav-item" data-page="analytics" onclick="goTo('analytics',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 14h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Analytics
+          </a>
+          <div class="nav-group-label">Management</div>
+          <a class="nav-item" data-page="users" onclick="goTo('users',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M1 13c0-2.8 2.2-5 5-5h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 10l1.5 1.5L15 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Users
+            <span class="nav-badge" id="navBadgeUsers">1,284</span>
+          </a>
+          <a class="nav-item" data-page="billing" onclick="goTo('billing',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 7h14" stroke="currentColor" stroke-width="1.4"/><circle cx="4.5" cy="10.5" r="1" fill="currentColor"/></svg>
+            Billing
+          </a>
+          <a class="nav-item" data-page="moderation" onclick="goTo('moderation',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l6 3v4c0 3.3-2.5 6.4-6 7.5C2.5 14.4 0 11.3 0 8V4l8-3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Moderation
+            <span class="nav-badge danger" id="navBadgeMod">7</span>
+          </a>
+          <div class="nav-group-label">System</div>
+          <a class="nav-item" data-page="health" onclick="goTo('health',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8h3l2-5 3 9 2-6 1 2h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            System Health
+          </a>
+          <a class="nav-item" data-page="logs" onclick="goTo('logs',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 5h6M5 8h6M5 11h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Audit Logs
+          </a>
+          <a class="nav-item" data-page="settings" onclick="goTo('settings',this)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.1 3.1l1 1M11.9 11.9l1 1M12.9 3.1l-1 1M4.1 11.9l-1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Settings
+          </a>
+        </nav>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="admin-user-card">
+          <div class="admin-avatar">A</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Super Admin</div>
+            <div class="admin-user-email">admin@ink.app</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2H2v10h3M9 4l3 3-3 3M12 7H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sign out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+      <!-- TOP BAR -->
+      <div class="admin-topbar">
+        <div class="topbar-left">
+          <div class="page-title" id="pageTitle">Dashboard</div>
+          <div class="breadcrumb" id="breadcrumb">Admin / Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-time" id="topbarTime"></div>
+          <div class="status-pill online">
+            <div class="status-dot"></div> All systems operational
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGES -->
+      <div class="page-container">
+
+        <!-- ══ DASHBOARD ══ -->
+        <div class="page active" id="page-dashboard">
+          <div class="stat-grid">
+            <div class="stat-card" onclick="goTo('users',document.querySelector('[data-page=users]'))">
+              <div class="stat-label">Total users</div>
+              <div class="stat-value">1,284</div>
+              <div class="stat-change up">+12% this month</div>
+              <div class="stat-sparkline" id="spark1"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Notes created</div>
+              <div class="stat-value">48,392</div>
+              <div class="stat-change up">+8% this month</div>
+              <div class="stat-sparkline" id="spark2"></div>
+            </div>
+            <div class="stat-card" onclick="goTo('billing',document.querySelector('[data-page=billing]'))">
+              <div class="stat-label">Monthly revenue</div>
+              <div class="stat-value">$3,840</div>
+              <div class="stat-change up">+22% this month</div>
+              <div class="stat-sparkline" id="spark3"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">AI queries today</div>
+              <div class="stat-value">2,147</div>
+              <div class="stat-change down">-3% vs yesterday</div>
+              <div class="stat-sparkline" id="spark4"></div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="dash-card wide">
+              <div class="card-header">
+                <div class="card-title">User growth</div>
+                <div class="card-actions">
+                  <button class="chip active" onclick="setChartRange('7d',this)">7d</button>
+                  <button class="chip" onclick="setChartRange('30d',this)">30d</button>
+                  <button class="chip" onclick="setChartRange('90d',this)">90d</button>
+                </div>
+              </div>
+              <canvas id="growthChart" height="200"></canvas>
+            </div>
+
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Plan distribution</div></div>
+              <canvas id="planChart" height="180"></canvas>
+              <div class="plan-legend" id="planLegend"></div>
+            </div>
+
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Recent signups</div></div>
+              <div class="mini-user-list" id="recentSignups"></div>
+            </div>
+
+            <div class="dash-card">
+              <div class="card-header">
+                <div class="card-title">Flagged content</div>
+                <span class="badge-danger" id="flaggedCount">7 pending</span>
+              </div>
+              <div class="flag-list" id="flagList"></div>
+              <button class="view-all-btn" onclick="goTo('moderation',document.querySelector('[data-page=moderation]'))">View all reports →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ ANALYTICS ══ -->
+        <div class="page" id="page-analytics">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">DAU</div><div class="stat-value">342</div><div class="stat-change up">+5% vs last week</div></div>
+            <div class="stat-card"><div class="stat-label">MAU</div><div class="stat-value">1,102</div><div class="stat-change up">+18%</div></div>
+            <div class="stat-card"><div class="stat-label">Avg session</div><div class="stat-value">8m 42s</div><div class="stat-change up">+1m 12s</div></div>
+            <div class="stat-card"><div class="stat-label">Retention D7</div><div class="stat-value">62%</div><div class="stat-change down">-2%</div></div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-card wide">
+              <div class="card-header"><div class="card-title">Daily active users — last 30 days</div></div>
+              <canvas id="dauChart" height="200"></canvas>
+            </div>
+            <div class="dash-card wide">
+              <div class="card-header"><div class="card-title">Feature usage breakdown</div></div>
+              <canvas id="featureChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ USERS ══ -->
+        <div class="page" id="page-users">
+          <div class="table-controls">
+            <div class="search-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <input type="text" placeholder="Search users by name or email…" id="userSearch" oninput="filterUsers(this.value)"/>
+            </div>
+            <div class="filter-row">
+              <select class="filter-select" id="planFilter" onchange="filterUsers()">
+                <option value="">All plans</option>
+                <option value="free">Free</option>
+                <option value="pro">Pro</option>
+                <option value="team">Team</option>
+              </select>
+              <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+                <option value="">All status</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"/></th>
+                  <th onclick="sortUsers('name')" class="sortable">User <span class="sort-icon">↕</span></th>
+                  <th onclick="sortUsers('plan')" class="sortable">Plan <span class="sort-icon">↕</span></th>
+                  <th onclick="sortUsers('notes')" class="sortable">Notes <span class="sort-icon">↕</span></th>
+                  <th onclick="sortUsers('joined')" class="sortable">Joined <span class="sort-icon">↕</span></th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span id="userCount" class="table-count"></span>
+            <div class="pagination" id="userPagination"></div>
+          </div>
+        </div>
+
+        <!-- ══ BILLING ══ -->
+        <div class="page" id="page-billing">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">MRR</div><div class="stat-value">$3,840</div><div class="stat-change up">+22%</div></div>
+            <div class="stat-card"><div class="stat-label">Pro users</div><div class="stat-value">312</div><div class="stat-change up">+34 this month</div></div>
+            <div class="stat-card"><div class="stat-label">Team users</div><div class="stat-value">48</div><div class="stat-change up">+6 this month</div></div>
+            <div class="stat-card"><div class="stat-label">Churn rate</div><div class="stat-value">2.4%</div><div class="stat-change down">+0.3%</div></div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-card wide">
+              <div class="card-header"><div class="card-title">Revenue over time</div></div>
+              <canvas id="revenueChart" height="200"></canvas>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Recent transactions</div></div>
+              <div id="transactionList" class="transaction-list"></div>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Issue coupon</div></div>
+              <div class="coupon-form">
+                <div class="field-group"><label class="field-label">Discount %</label><input type="number" class="field-input sm" value="20" id="couponPct" min="1" max="100"/></div>
+                <div class="field-group"><label class="field-label">Duration (months)</label><input type="number" class="field-input sm" value="3" id="couponDur" min="1"/></div>
+                <div class="field-group"><label class="field-label">Code</label><input type="text" class="field-input sm" value="INK2026" id="couponCode"/></div>
+                <button class="action-btn primary" onclick="generateCoupon()">Generate coupon</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ MODERATION ══ -->
+        <div class="page" id="page-moderation">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">Open reports</div><div class="stat-value" id="openReports">7</div><div class="stat-change down">Needs attention</div></div>
+            <div class="stat-card"><div class="stat-label">Resolved this week</div><div class="stat-value">23</div><div class="stat-change up">Good pace</div></div>
+            <div class="stat-card"><div class="stat-label">Accounts suspended</div><div class="stat-value">12</div></div>
+            <div class="stat-card"><div class="stat-label">False positives</div><div class="stat-value">3%</div><div class="stat-change up">Low — good</div></div>
+          </div>
+          <div class="dash-card" style="margin-top:0">
+            <div class="card-header">
+              <div class="card-title">Report queue</div>
+              <div class="card-actions">
+                <button class="chip active">All</button>
+                <button class="chip">Spam</button>
+                <button class="chip">Abuse</button>
+                <button class="chip">Resolved</button>
+              </div>
+            </div>
+            <div id="reportQueue" class="report-queue"></div>
+          </div>
+        </div>
+
+        <!-- ══ SYSTEM HEALTH ══ -->
+        <div class="page" id="page-health">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">API uptime</div><div class="stat-value green-val">99.98%</div><div class="stat-change up">Last 30 days</div></div>
+            <div class="stat-card"><div class="stat-label">Avg response</div><div class="stat-value">142ms</div><div class="stat-change up">-12ms vs last week</div></div>
+            <div class="stat-card"><div class="stat-label">Error rate</div><div class="stat-value">0.04%</div><div class="stat-change up">Within threshold</div></div>
+            <div class="stat-card"><div class="stat-label">DB size</div><div class="stat-value">2.4 GB</div><div class="stat-change up">+180MB this month</div></div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-card wide">
+              <div class="card-header"><div class="card-title">Response time — last 24h</div></div>
+              <canvas id="responseChart" height="200"></canvas>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Service status</div></div>
+              <div id="serviceList" class="service-list"></div>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Recent errors</div></div>
+              <div id="errorList" class="error-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ AUDIT LOGS ══ -->
+        <div class="page" id="page-logs">
+          <div class="table-controls">
+            <div class="search-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <input type="text" placeholder="Filter logs…" id="logSearch" oninput="filterLogs(this.value)"/>
+            </div>
+            <button class="action-btn" onclick="exportLogs()">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 9v2.5h9V9M6.5 1v7M4 5l2.5 3L9 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Export CSV
+            </button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Admin</th>
+                  <th>Action</th>
+                  <th>Target</th>
+                  <th>Details</th>
+                  <th>IP</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span id="logCount" class="table-count"></span>
+          </div>
+        </div>
+
+        <!-- ══ SETTINGS ══ -->
+        <div class="page" id="page-settings">
+          <div class="settings-grid">
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">App configuration</div></div>
+              <div class="settings-form">
+                <div class="field-group"><label class="field-label">App name</label><input type="text" class="field-input" value="Ink Notes"/></div>
+                <div class="field-group"><label class="field-label">Support email</label><input type="email" class="field-input" value="support@ink.app"/></div>
+                <div class="field-group"><label class="field-label">Max notes (free plan)</label><input type="number" class="field-input" value="50"/></div>
+                <div class="field-group"><label class="field-label">Max storage per user (MB)</label><input type="number" class="field-input" value="100"/></div>
+                <button class="action-btn primary" onclick="saveSettings()">Save changes</button>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Feature flags</div></div>
+              <div class="flag-toggles" id="flagToggles"></div>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Send announcement</div></div>
+              <div class="settings-form">
+                <div class="field-group"><label class="field-label">Title</label><input type="text" class="field-input" placeholder="New feature: AI writing assistant" id="announceTitle"/></div>
+                <div class="field-group"><label class="field-label">Message</label><textarea class="field-input" rows="3" placeholder="We've just launched…" id="announceMsg" style="resize:vertical"></textarea></div>
+                <div class="field-group">
+                  <label class="field-label">Send to</label>
+                  <select class="field-input" id="announceTo">
+                    <option>All users</option>
+                    <option>Free users only</option>
+                    <option>Pro & Team users</option>
+                  </select>
+                </div>
+                <button class="action-btn primary" onclick="sendAnnouncement()">Send announcement</button>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="card-header"><div class="card-title">Danger zone</div></div>
+              <div class="danger-zone">
+                <div class="danger-item">
+                  <div>
+                    <div class="danger-title">Purge trash notes</div>
+                    <div class="danger-desc">Permanently delete all trashed notes older than 30 days</div>
+                  </div>
+                  <button class="action-btn danger" onclick="dangerAction('purge')">Purge</button>
+                </div>
+                <div class="danger-item">
+                  <div>
+                    <div class="danger-title">Maintenance mode</div>
+                    <div class="danger-desc">Take the app offline for all users temporarily</div>
+                  </div>
+                  <button class="action-btn danger" id="maintBtn" onclick="dangerAction('maintenance')">Enable</button>
+                </div>
+                <div class="danger-item">
+                  <div>
+                    <div class="danger-title">Reset analytics</div>
+                    <div class="danger-desc">Clear all cached analytics data and rebuild from scratch</div>
+                  </div>
+                  <button class="action-btn danger" onclick="dangerAction('reset')">Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end page-container -->
+    </main>
+  </div>
+
+  <!-- USER DETAIL MODAL -->
+  <div class="modal-overlay" id="userModal" onclick="closeUserModal(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalUserName">User Details</div>
+        <button class="modal-close" onclick="closeUserModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirmModal" onclick="closeConfirm(event)">
+    <div class="modal-box sm">
+      <div class="modal-header">
+        <div class="modal-title" id="confirmTitle">Confirm action</div>
+        <button class="modal-close" onclick="closeConfirm()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMsg" style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px"></p>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button class="action-btn" onclick="closeConfirm()">Cancel</button>
+          <button class="action-btn danger" id="confirmOkBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

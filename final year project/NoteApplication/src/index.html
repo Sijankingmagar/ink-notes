@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes App</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="ai-panel.css"/>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" style="position:fixed;inset:0;background:#0e0d0b;display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px">
+    <div style="background:#161512;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:40px;width:100%;max-width:380px">
+      <div style="font-family:Georgia,serif;font-size:32px;color:#e8a83a;text-align:center;margin-bottom:6px;font-style:italic">Notes App</div>
+      <div style="text-align:center;color:rgba(255,255,255,0.3);font-size:13px;margin-bottom:28px">Your AI-powered note taking app</div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div style="margin-bottom:10px">
+          <input id="loginEmail" type="email" placeholder="Email address"
+            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box"
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <div style="margin-bottom:16px">
+          <input id="loginPass" type="password" placeholder="Password"
+            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box"
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <button id="loginBtn" onclick="doLogin()"
+          style="width:100%;background:#e8a83a;border:none;border-radius:8px;padding:12px;color:#0e0d0b;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;transition:background 0.2s"
+          onmouseover="this.style.background='#f0c060'" onmouseout="this.style.background='#e8a83a'">
+          Sign in
+        </button>
+        <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:13px;margin:0">
+          No account? <span onclick="showSignup()" style="color:#e8a83a;cursor:pointer;text-decoration:underline">Create one</span>
+        </p>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" style="display:none">
+        <div style="margin-bottom:10px">
+          <input id="signupName" type="text" placeholder="Full name"
+            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box"/>
+        </div>
+        <div style="margin-bottom:10px">
+          <input id="signupEmail" type="email" placeholder="Email address"
+            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box"/>
+        </div>
+        <div style="margin-bottom:16px">
+          <input id="signupPass" type="password" placeholder="Password (min 6 characters)"
+            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box"
+            onkeydown="if(event.key==='Enter')doSignup()"/>
+        </div>
+        <button id="signupBtn" onclick="doSignup()"
+          style="width:100%;background:#e8a83a;border:none;border-radius:8px;padding:12px;color:#0e0d0b;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;transition:background 0.2s"
+          onmouseover="this.style.background='#f0c060'" onmouseout="this.style.background='#e8a83a'">
+          Create account
+        </button>
+        <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:13px;margin:0">
+          Have account? <span onclick="showLogin()" style="color:#e8a83a;cursor:pointer;text-decoration:underline">Sign in</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MOBILE OVERLAY -->
+  <div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+
+  <!-- ════════════════ SIDEBAR ════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+      <a class="logo" href="#">
+        <div class="logo-mark">I</div>
+        <span class="logo-name">Ink</span>
+      </a>
+      <button class="new-btn" onclick="createNewNote()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        New note
+      </button>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" placeholder="Search notes…" id="sidebarSearch" oninput="handleSearch(this.value)"/>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Library</div>
+
+      <div class="nav-item active" onclick="filterNotes('all', this)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M1 2h13M1 7h13M1 12h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        All notes
+        <span class="nav-count" id="countAll">0</span>
+      </div>
+
+      <div class="nav-item" onclick="filterNotes('pinned', this)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M5.5 9.5L2 13M9 1l5 5-2 2-3-1-4 4-1-1 4-4-1-3 2-2z"
+            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Pinned
+        <span class="nav-count" id="countPinned">0</span>
+      </div>
+
+      <div class="nav-item" onclick="filterNotes('recent', this)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M7.5 4.5v3.5l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Recent
+      </div>
+
+      <div class="nav-item" onclick="filterNotes('trash', this)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M2 4h11M5 4V2h5v2M6 7v5M9 7v5M3 4l1 9h7l1-9"
+            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Trash
+        <span class="nav-count" id="countTrash">0</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Tags</div>
+      <div class="tags-list" id="tagsList"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="doLogout()" title="Click to logout">
+        <div class="avatar">UK</div>
+        <div class="user-info">
+          <div class="user-name">User</div>
+          <div class="user-plan">Free plan · 12 notes</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--text3)">
+          <circle cx="7" cy="4" r="1" fill="currentColor"/>
+          <circle cx="7" cy="7" r="1" fill="currentColor"/>
+          <circle cx="7" cy="10" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ════════════════ NOTES LIST ════════════════ -->
+  <section class="notes-panel" id="notesPanel">
+
+    <div class="notes-header">
+      <div class="notes-title">
+        <span id="panelTitle">All notes</span>
+        <button class="sort-btn" onclick="toggleSort()">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M1 2h9M2.5 5h6M4 8h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <span id="sortLabel">Newest</span>
+        </button>
+      </div>
+      <div class="notes-filter">
+        <div class="filter-pill active" onclick="setTypeFilter('all', this)">All</div>
+        <div class="filter-pill" onclick="setTypeFilter('text', this)">Text</div>
+        <div class="filter-pill" onclick="setTypeFilter('list', this)">List</div>
+      </div>
+    </div>
+
+    <div class="notes-list" id="notesList"></div>
+
+  </section>
+
+  <!-- ════════════════ EDITOR ════════════════ -->
+  <main class="editor-area" id="editorArea">
+
+    <div class="editor-toolbar" id="editorToolbar">
+
+      <button class="menu-toggle" onclick="openSidebar()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" title="Bold (Ctrl+B)"   onclick="execFmt('bold')"><b>B</b></button>
+        <button class="tool-btn" title="Italic (Ctrl+I)" onclick="execFmt('italic')"><i>I</i></button>
+        <button class="tool-btn" title="Underline"       onclick="execFmt('underline')" style="text-decoration:underline">U</button>
+        <button class="tool-btn" title="Strikethrough"   onclick="execFmt('strikeThrough')" style="text-decoration:line-through">S</button>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" title="Heading 1" onclick="execFmt('formatBlock','h1')">H1</button>
+        <button class="tool-btn" title="Heading 2" onclick="execFmt('formatBlock','h2')">H2</button>
+        <button class="tool-btn" title="Blockquote" onclick="execFmt('formatBlock','blockquote')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 4h4v4H2zM8 4h4v4H8zM4 8c0 2 1 3 2 3M10 8c0 2 1 3 2 3"
+              stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="tool-btn" title="Bullet list" onclick="execFmt('insertUnorderedList')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="2.5" cy="4"  r="1.5" fill="currentColor"/>
+            <circle cx="2.5" cy="8"  r="1.5" fill="currentColor"/>
+            <circle cx="2.5" cy="12" r="1.5" fill="currentColor"/>
+            <path d="M6 4h7M6 8h7M6 12h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" title="Inline code" onclick="wrapCode()">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <path d="M5 4L1 7.5 5 11M10 4l4 3.5-4 3.5M8.5 2l-2 11"
+              stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="tool-btn" title="Pin note" id="pinBtn" onclick="togglePin()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M5 8.5L2 11.5M8 1l4 4-2 2-3-1-4 4-.5-1 4-4-1-3 2-2z"
+              stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="toolbar-spacer"></div>
+
+      <button class="ai-toggle-btn" id="aiToggleBtn" onclick="toggleAiPanel()">
+        <div class="ai-dot"></div>
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M6.5 1L8 4.5H12L9 6.8l1.2 3.7L6.5 8.3 3.3 10.5 4.5 6.8 1.5 4.5H5.5L6.5 1z"
+            stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+        </svg>
+        Ask AI
+      </button>
+
+      <button class="action-btn" onclick="exportNote()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 9v2.5h9V9M6.5 1v7M4 5l2.5 3L9 5"
+            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Export
+      </button>
+
+      <button class="action-btn danger" onclick="confirmDelete()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 3.5h9M4.5 3.5V2h4v1.5M5.5 6v4M7.5 6v4M2.5 3.5L3 11h7l.5-7.5"
+            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Delete
+      </button>
+
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9M14 3l6 6M14 3v6h6M8 13h8M8 17h5"
+            stroke="var(--text3)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3>Select a note</h3>
+      <p>Pick a note from the list, or start fresh with a new one.</p>
+      <button class="empty-cta" onclick="createNewNote()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        New note
+      </button>
+    </div>
+
+    <!-- Note editor -->
+    <div class="editor-scroll" id="editorScroll" style="display:none">
+      <div class="editor-meta">
+        <span class="editor-tag-badge" id="editorTagBadge">General</span>
+        <span class="editor-date" id="editorDate">—</span>
+      </div>
+      <textarea
+        class="editor-title-input"
+        id="titleInput"
+        placeholder="Note title…"
+        oninput="onTitleChange()"
+        rows="1"
+      ></textarea>
+      <div class="editor-divider"></div>
+      <div
+        class="editor-body"
+        id="noteBody"
+        contenteditable="true"
+        oninput="onBodyChange()"
+        onkeydown="handleBodyKey(event)"
+        data-placeholder="Start writing…"
+      ></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="editor-footer" id="editorFooter" style="display:none">
+      <div class="stat-item"><strong id="wordCount">0</strong>&nbsp;words</div>
+      <div class="stat-item"><strong id="charCount">0</strong>&nbsp;chars</div>
+      <div class="stat-item"><strong id="readTime">0</strong>&nbsp;min read</div>
+      <div class="save-indicator" id="saveIndicator">
+        <div class="save-dot"></div> Saved
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ════════════════ INFO PANEL ════════════════ -->
+  <aside class="info-panel" id="infoPanel">
+
+    <div class="info-header">Note info</div>
+
+    <div class="info-section">
+      <div class="info-section-title">Details</div>
+      <div class="info-row"><span class="info-key">Created</span><span class="info-val" id="infoCreated">—</span></div>
+      <div class="info-row"><span class="info-key">Modified</span><span class="info-val" id="infoModified">—</span></div>
+      <div class="info-row"><span class="info-key">Words</span><span class="info-val" id="infoWords">—</span></div>
+      <div class="info-row"><span class="info-key">Characters</span><span class="info-val" id="infoChars">—</span></div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Tags</div>
+      <div class="tag-list-edit" id="infoTagsList"></div>
+      <br/>
+      <button class="add-tag-btn" onclick="addTagToNote()">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M5 1v8M1 5h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        Add tag
+      </button>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Color</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap" id="colorPicker"></div>
+    </div>
+
+  </aside>
+
+  <!-- ════════════════ AI SIDE PANEL ════════════════ -->
+  <aside class="ai-panel" id="aiPanel">
+
+    <div class="ai-panel-header">
+      <div class="ai-panel-title-row">
+        <div class="ai-panel-title">
+          <div class="ai-sparkle">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M6.5 1L8 4.5H12L9 6.8l1.2 3.7L6.5 8.3 3.3 10.5 4.5 6.8 1.5 4.5H5.5L6.5 1z"
+                stroke="var(--accent)" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          Ink AI
+        </div>
+        <button class="ai-close-btn" onclick="closeAiPanel()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="ai-tabs">
+        <button class="ai-tab active" data-tab="write"     onclick="switchAiTab('write')">Write</button>
+        <button class="ai-tab"        data-tab="summarize" onclick="switchAiTab('summarize')">Summarize</button>
+        <button class="ai-tab"        data-tab="tags"      onclick="switchAiTab('tags')">Tags</button>
+        <button class="ai-tab"        data-tab="chat"      onclick="switchAiTab('chat')">Chat</button>
+      </div>
+    </div>
+
+    <div class="ai-panel-body">
+
+      <!-- ── TAB: WRITE ── -->
+      <div class="ai-pane active" id="aiPane-write">
+        <div id="apiKeyPrompt-write" class="api-key-prompt" style="display:none">
+          <div class="api-key-prompt-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="2" y="6" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.3"/>
+              <path d="M5 6V4.5a2 2 0 014 0V6" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Add your Anthropic API key
+          </div>
+          <p>Get a free key at console.anthropic.com — stored only in your browser.</p>
+          <div class="api-key-input-row">
+            <input class="api-key-input" id="apiKeyInput-write" type="password" placeholder="sk-ant-api03-..."/>
+            <button class="api-key-save-btn" onclick="handleSaveKey('write')">Save</button>
+          </div>
+        </div>
+        <div id="aiContent-write">
+          <div class="ai-section-label">Quick actions</div>
+          <div class="ai-actions-grid">
+            <div class="ai-action-card" onclick="runWritingAction('continue')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-action-name">Continue</div>
+              <div class="ai-action-desc">Extend your writing</div>
+            </div>
+            <div class="ai-action-card" onclick="runWritingAction('rephrase')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5c0-1.7 1.3-3 3-3h4M12 9c0 1.7-1.3 3-3 3H5M10 3l2 2-2 2M4 7l-2 2 2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-action-name">Rephrase</div>
+              <div class="ai-action-desc">Rewrite more clearly</div>
+            </div>
+            <div class="ai-action-card" onclick="runWritingAction('grammar')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M2 7h7M2 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="10" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+              </div>
+              <div class="ai-action-name">Fix grammar</div>
+              <div class="ai-action-desc">Spelling &amp; style</div>
+            </div>
+            <div class="ai-action-card" onclick="runWritingAction('shorten')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div class="ai-action-name">Shorten</div>
+              <div class="ai-action-desc">Cut the fluff</div>
+            </div>
+            <div class="ai-action-card" onclick="runWritingAction('expand')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div class="ai-action-name">Expand</div>
+              <div class="ai-action-desc">Add more depth</div>
+            </div>
+            <div class="ai-action-card" onclick="runWritingAction('tone_formal')">
+              <div class="ai-action-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11V5l4-3 4 3v6M5 11V8h4v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-action-name">Formalize</div>
+              <div class="ai-action-desc">Professional tone</div>
+            </div>
+          </div>
+
+          <div class="ai-section-label">Custom instruction</div>
+          <textarea class="ai-instruction" id="writeInstruction"
+            placeholder="e.g. Make this more persuasive, add bullet points, translate to Spanish…"
+            onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey))runCustomInstruction()"></textarea>
+          <div class="quick-prompts">
+            <button class="quick-prompt" onclick="document.getElementById('writeInstruction').value='Make this more persuasive'">Persuasive</button>
+            <button class="quick-prompt" onclick="document.getElementById('writeInstruction').value='Add relevant examples'">Add examples</button>
+            <button class="quick-prompt" onclick="document.getElementById('writeInstruction').value='Make this more casual'">Casual tone</button>
+            <button class="quick-prompt" onclick="document.getElementById('writeInstruction').value='Translate to Spanish'">Translate</button>
+          </div>
+          <button class="ai-send-btn" id="writeSendBtn" onclick="runCustomInstruction()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.5H11L8.5 6.5l1 3.5L6 8l-3.5 2 1-3.5L1 4.5h3.5L6 1z" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            Run instruction
+          </button>
+
+          <div class="ai-section-label">Result</div>
+          <div class="ai-result-card" id="writeResult">
+            <div class="ai-result-placeholder">Results will appear here after running an action above.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SUMMARIZE ── -->
+      <div class="ai-pane" id="aiPane-summarize">
+        <div id="apiKeyPrompt-summarize" class="api-key-prompt" style="display:none">
+          <div class="api-key-prompt-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.3"/><path d="M5 6V4.5a2 2 0 014 0V6" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Add your Anthropic API key
+          </div>
+          <p>Get a free key at console.anthropic.com — stored only in your browser.</p>
+          <div class="api-key-input-row">
+            <input class="api-key-input" id="apiKeyInput-summarize" type="password" placeholder="sk-ant-api03-..."/>
+            <button class="api-key-save-btn" onclick="handleSaveKey('summarize')">Save</button>
+          </div>
+        </div>
+        <div id="aiContent-summarize">
+          <div class="ai-section-label">Summarize current note as</div>
+          <div class="ai-actions-grid">
+            <div class="ai-action-card" onclick="runSummarize('brief')">
+              <div class="ai-action-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M2 7h7M2 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="ai-action-name">Brief</div>
+              <div class="ai-action-desc">2–3 sentences</div>
+            </div>
+            <div class="ai-action-card" onclick="runSummarize('bullets')">
+              <div class="ai-action-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="4.5" r="1.2" fill="currentColor"/><circle cx="3" cy="9.5" r="1.2" fill="currentColor"/><path d="M6 4.5h6M6 9.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="ai-action-name">Key bullets</div>
+              <div class="ai-action-desc">Main points</div>
+            </div>
+            <div class="ai-action-card" onclick="runSummarize('tldr')">
+              <div class="ai-action-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="ai-action-name">TL;DR</div>
+              <div class="ai-action-desc">One-liner</div>
+            </div>
+            <div class="ai-action-card" onclick="runSummarize('outline')">
+              <div class="ai-action-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M4 6h8M4 9h8M2 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="ai-action-name">Outline</div>
+              <div class="ai-action-desc">Structured view</div>
+            </div>
+          </div>
+          <div class="ai-section-label">Result</div>
+          <div class="ai-result-card" id="summarizeResult">
+            <div class="ai-result-placeholder">Select a format above to summarize the current note.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: TAGS ── -->
+      <div class="ai-pane" id="aiPane-tags">
+        <div id="apiKeyPrompt-tags" class="api-key-prompt" style="display:none">
+          <div class="api-key-prompt-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.3"/><path d="M5 6V4.5a2 2 0 014 0V6" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Add your Anthropic API key
+          </div>
+          <p>Get a free key at console.anthropic.com — stored only in your browser.</p>
+          <div class="api-key-input-row">
+            <input class="api-key-input" id="apiKeyInput-tags" type="password" placeholder="sk-ant-api03-..."/>
+            <button class="api-key-save-btn" onclick="handleSaveKey('tags')">Save</button>
+          </div>
+        </div>
+        <div id="aiContent-tags">
+          <div class="ai-section-label">Auto-suggest tags</div>
+          <p style="font-size:12.5px;color:var(--text3);line-height:1.6;margin-bottom:12px">
+            AI reads your note and suggests the most relevant tags from your library.
+          </p>
+          <button class="ai-send-btn" onclick="runAutoTag()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.5H11L8.5 6.5l1 3.5L6 8l-3.5 2 1-3.5L1 4.5h3.5L6 1z" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            Suggest tags for this note
+          </button>
+          <div class="ai-divider"></div>
+          <div class="ai-section-label">Suggestions</div>
+          <div class="ai-result-card" id="tagResult">
+            <div class="ai-result-placeholder">Click above to get tag suggestions.</div>
+          </div>
+          <div class="ai-divider"></div>
+          <div class="ai-section-label">Your tag library</div>
+          <div id="allTagsDisplay" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
+      </div>
+
+      <!-- ── TAB: CHAT ── -->
+      <div class="ai-pane" id="aiPane-chat">
+        <div id="apiKeyPrompt-chat" class="api-key-prompt" style="display:none">
+          <div class="api-key-prompt-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.3"/><path d="M5 6V4.5a2 2 0 014 0V6" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Add your Anthropic API key
+          </div>
+          <p>Get a free key at console.anthropic.com — stored only in your browser.</p>
+          <div class="api-key-input-row">
+            <input class="api-key-input" id="apiKeyInput-chat" type="password" placeholder="sk-ant-api03-..."/>
+            <button class="api-key-save-btn" onclick="handleSaveKey('chat')">Save</button>
+          </div>
+        </div>
+        <div id="aiContent-chat">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div class="ai-section-label" style="margin:0">Conversation</div>
+            <button onclick="clearChat()" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:color 0.15s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">Clear</button>
+          </div>
+
+          <!-- Search scope toggle -->
+          <div style="display:flex;gap:5px;margin-bottom:6px">
+            <button id="chatMode-all" class="chat-mode-btn active" onclick="setChatMode('all')"
+              style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid rgba(232,168,58,0.3);background:rgba(232,168,58,0.1);color:var(--accent);font-family:var(--sans);font-size:11.5px;font-weight:500;cursor:pointer;transition:all 0.15s">
+              All notes
+            </button>
+            <button id="chatMode-current" class="chat-mode-btn" onclick="setChatMode('current')"
+              style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text2);font-family:var(--sans);font-size:11.5px;cursor:pointer;transition:all 0.15s">
+              Current note
+            </button>
+          </div>
+          <div id="chatModeHint" style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:0 2px">
+            Searching across all notes
+          </div>
+
+          <div class="ai-chat-messages" id="chatMessages"></div>
+
+          <!-- Smart quick starters -->
+          <div class="quick-prompts" style="margin-bottom:10px">
+            <button class="quick-prompt" onclick="useChatStarter('Find my bank account details')">Bank details</button>
+            <button class="quick-prompt" onclick="useChatStarter('List all my project deadlines')">Deadlines</button>
+            <button class="quick-prompt" onclick="useChatStarter('What passwords have I saved?')">Passwords</button>
+            <button class="quick-prompt" onclick="useChatStarter('Show all tasks I need to do')">Tasks</button>
+            <button class="quick-prompt" onclick="useChatStarter('Summarize everything I have written about work')">Work notes</button>
+            <button class="quick-prompt" onclick="useChatStarter('What ideas have I written down?')">Ideas</button>
+          </div>
+
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chatInput"
+              placeholder="e.g. What is my HDFC account number?"
+              onkeydown="handleChatKey(event)" rows="1"></textarea>
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 12L12 7 2 2v4l7 1-7 1v4z" fill="currentColor"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ════════════════ DELETE MODAL ════════════════ -->
+  <div class="modal-bg" id="deleteModal">
+    <div class="modal">
+      <div class="modal-title">Delete this note?</div>
+      <div class="modal-sub">This note will be moved to trash. You can restore it later.</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-delete" onclick="deleteNote()">Move to trash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript (loaded last so DOM is ready) -->
+  <script src="app.js"></script>
+
+</body>
+</html>
