@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 // ── PROTECT ROUTE (any logged in user) ──
 const protect = (req, res, next) => {
   try {
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
     // Get token from header
     const authHeader = req.headers.authorization;
 
@@ -37,3 +38,4 @@ const adminOnly = (req, res, next) => {
 };
 
 module.exports = { protect, adminOnly };
+
